@@ -11,10 +11,11 @@ WEBHOOK_URL = 'https://kokotwitchbot.onrender.com'  # Replace this after deployi
 VERIFY_SECRET = 'supersecret'
 redeem_queue = []
 
+# === Twitch Bot Class ===
 class TwitchBot(commands.Bot):
     def __init__(self):
         super().__init__(
-            token = 'oauth:9h4jv1axihit9oyvbad32ur2mpv57x',  # Replace this with your chat OAuth
+            token='oauth:9h4jv1axihit9oyvbad32ur2mpv57x',  # kokocatbot's token
             prefix='!',
             initial_channels=[TWITCH_CHANNEL_NAME]
         )
@@ -23,6 +24,11 @@ class TwitchBot(commands.Bot):
         print(f"✅ Twitch bot ready: {self.nick}")
 
     async def event_message(self, message):
+        if not message.author:
+            print("⚠️ Skipping message with no author.")
+            return
+        if message.echo:
+            return
         await self.handle_commands(message)
 
     @commands.command(name="que")
@@ -43,6 +49,7 @@ class TwitchBot(commands.Bot):
             else:
                 await ctx.send("The redeem queue is empty.")
 
+# === EventSub Webhook Handler ===
 async def handle_eventsub(request):
     data = await request.json()
     if 'challenge' in data:
@@ -56,6 +63,7 @@ async def handle_eventsub(request):
         print(f"[Redeem] {user} redeemed: {reward}")
     return web.Response(text="OK")
 
+# === Subscribe to Twitch EventSub ===
 async def subscribe_to_eventsub(broadcaster_id, token):
     headers = {
         "Client-ID": TWITCH_CLIENT_ID,
@@ -73,8 +81,13 @@ async def subscribe_to_eventsub(broadcaster_id, token):
         }
     }
     async with aiohttp.ClientSession() as session:
-        await session.post("https://api.twitch.tv/helix/eventsub/subscriptions", headers=headers, json=payload)
+        await session.post(
+            "https://api.twitch.tv/helix/eventsub/subscriptions",
+            headers=headers,
+            json=payload
+        )
 
+# === Get Broadcaster Info and Token ===
 async def get_broadcaster_id_and_token():
     async with aiohttp.ClientSession() as session:
         token_resp = await session.post("https://id.twitch.tv/oauth2/token", params={
@@ -93,6 +106,7 @@ async def get_broadcaster_id_and_token():
         broadcaster_id = user_data['data'][0]['id']
         return broadcaster_id, token
 
+# === Main App Launch ===
 async def main():
     broadcaster_id, token = await get_broadcaster_id_and_token()
     await subscribe_to_eventsub(broadcaster_id, token)
@@ -101,17 +115,16 @@ async def main():
     app.router.add_post('/webhook', handle_eventsub)
     runner = web.AppRunner(app)
     await runner.setup()
-    PORT = int(os.environ.get("PORT", 8080))  # fallback locally
+    PORT = int(os.environ.get("PORT", 8080))
     site = web.TCPSite(runner, '0.0.0.0', PORT)
     await site.start()
-    print("🌐 Webhook server running")
+    print("🌐 Webhook server running on port", PORT)
 
     bot = TwitchBot()
     try:
         await bot.start()
     except Exception as e:
         print(f"⚠️ Twitch bot failed to start: {e}")
-
 
 if __name__ == '__main__':
     asyncio.run(main())
