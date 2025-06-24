@@ -16,7 +16,7 @@ class TwitchBot(commands.Bot):
     def __init__(self):
         print(f"🔧 Initializing TwitchBot for channel: {TWITCH_CHANNEL_NAME}")
         super().__init__(
-            token='oauth:9h4jv1axihit9oyvbad32ur2mpv57x',  # Replace with your updated token if needed
+            token='oauth:i9enlsir7irpzemd364elr5kn1hhj9',  # Replace with your updated token if needed
             prefix='!',
             initial_channels=[TWITCH_CHANNEL_NAME]
         )
