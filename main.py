@@ -1,3 +1,4 @@
+import os
 import asyncio
 import aiohttp
 from aiohttp import web
@@ -100,12 +101,17 @@ async def main():
     app.router.add_post('/webhook', handle_eventsub)
     runner = web.AppRunner(app)
     await runner.setup()
-    site = web.TCPSite(runner, port=8080)
+    PORT = int(os.environ.get("PORT", 8080))  # fallback locally
+    site = web.TCPSite(runner, '0.0.0.0', PORT)
     await site.start()
     print("🌐 Webhook server running")
 
     bot = TwitchBot()
-    asyncio.create_task(bot.start())
+    try:
+        await bot.start()
+    except Exception as e:
+        print(f"⚠️ Twitch bot failed to start: {e}")
+
 
 if __name__ == '__main__':
     asyncio.run(main())
