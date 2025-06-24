@@ -4,18 +4,20 @@ import aiohttp
 from aiohttp import web
 from twitchio.ext import commands
 
-TWITCH_CLIENT_ID = 'fnvi9p6h2df2jbfzir013n14hme1t1'
-TWITCH_CLIENT_SECRET = 'o5yaim2b9bu3l51qrpuu3urpwg0e02'
-TWITCH_CHANNEL_NAME = 'niikokonut'
-WEBHOOK_URL = 'https://kokotwitchbot.onrender.com'
-VERIFY_SECRET = 'supersecret'
+TWITCH_CLIENT_ID = os.environ['TWITCH_CLIENT_ID']
+TWITCH_CLIENT_SECRET = os.environ['TWITCH_CLIENT_SECRET']
+TWITCH_CHANNEL_NAME = os.environ['TWITCH_CHANNEL_NAME']
+WEBHOOK_URL = os.environ['WEBHOOK_URL']
+VERIFY_SECRET = os.environ['VERIFY_SECRET']
+BOT_OAUTH_TOKEN = os.environ['BOT_OAUTH_TOKEN']
+
 redeem_queue = []
 
 class TwitchBot(commands.Bot):
     def __init__(self):
         print(f"🔧 Initializing TwitchBot for channel: {TWITCH_CHANNEL_NAME}")
         super().__init__(
-            token='oauth:1c785ffkcueqey7wk3j90vjn8mzvod',  # lama_dk token
+            token=BOT_OAUTH_TOKEN,
             prefix='!',
             initial_channels=[TWITCH_CHANNEL_NAME]
         )
