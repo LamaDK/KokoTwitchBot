@@ -6,7 +6,7 @@ from twitchio.ext import commands
 TWITCH_CLIENT_ID = 'fnvi9p6h2df2jbfzir013n14hme1t1'
 TWITCH_CLIENT_SECRET = 'o5yaim2b9bu3l51qrpuu3urpwg0e02'
 TWITCH_CHANNEL_NAME = 'niikokonut'
-WEBHOOK_URL = 'https://your.render.url/webhook'  # Replace this after deploying to Render
+WEBHOOK_URL = 'https://kokotwitchbot.onrender.com'  # Replace this after deploying to Render
 VERIFY_SECRET = 'supersecret'
 redeem_queue = []
 
