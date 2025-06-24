@@ -7,7 +7,6 @@ from twitchio.ext import commands
 TWITCH_CLIENT_ID = 'fnvi9p6h2df2jbfzir013n14hme1t1'
 TWITCH_CLIENT_SECRET = 'o5yaim2b9bu3l51qrpuu3urpwg0e02'
 TWITCH_CHANNEL_NAME = 'niikokonut'
-BOT_OWNER = 'lama_dk'  # your username
 WEBHOOK_URL = 'https://kokotwitchbot.onrender.com'
 VERIFY_SECRET = 'supersecret'
 redeem_queue = []
@@ -17,7 +16,7 @@ class TwitchBot(commands.Bot):
     def __init__(self):
         print(f"🔧 Initializing TwitchBot for channel: {TWITCH_CHANNEL_NAME}")
         super().__init__(
-            token='oauth:1c785ffkcueqey7wk3j90vjn8mzvod',
+            token='oauth:1c785ffkcueqey7wk3j90vjn8mzvod',  # lama_dk's token
             prefix='!',
             initial_channels=[TWITCH_CHANNEL_NAME]
         )
@@ -38,26 +37,20 @@ class TwitchBot(commands.Bot):
     @commands.command(name="que")
     async def que_command(self, ctx):
         print(f"⚙️ Command received: !que from {ctx.author.name}")
-        if ctx.author.is_mod or ctx.author.name.lower() == TWITCH_CHANNEL_NAME or ctx.author.name.lower() == BOT_OWNER:
-            if redeem_queue:
-                msg = '\n'.join(f"{i+1}. {item}" for i, item in enumerate(redeem_queue))
-            else:
-                msg = "The redeem queue is currently empty."
-            await ctx.send(msg)
+        if redeem_queue:
+            msg = '\n'.join(f"{i+1}. {item}" for i, item in enumerate(redeem_queue))
         else:
-            print(f"⛔ Unauthorized attempt to use !que by {ctx.author.name}")
+            msg = "The redeem queue is currently empty."
+        await ctx.send(msg)
 
     @commands.command(name="next")
     async def next_command(self, ctx):
         print(f"⚙️ Command received: !next from {ctx.author.name}")
-        if ctx.author.is_mod or ctx.author.name.lower() == TWITCH_CHANNEL_NAME or ctx.author.name.lower() == BOT_OWNER:
-            if redeem_queue:
-                next_item = redeem_queue.pop(0)
-                await ctx.send(f"Next up: {next_item}")
-            else:
-                await ctx.send("The redeem queue is empty.")
+        if redeem_queue:
+            next_item = redeem_queue.pop(0)
+            await ctx.send(f"Next up: {next_item}")
         else:
-            print(f"⛔ Unauthorized attempt to use !next by {ctx.author.name}")
+            await ctx.send("The redeem queue is empty.")
 
 # === EventSub Webhook Handler ===
 async def handle_eventsub(request):
