@@ -14,7 +14,7 @@ redeem_queue = []
 class TwitchBot(commands.Bot):
     def __init__(self):
         super().__init__(
-            token = 'oauth:q785qvyz4gd2cvpzutbdjmwcp8oo77',  # Replace this with your chat OAuth
+            token = 'oauth:9h4jv1axihit9oyvbad32ur2mpv57x',  # Replace this with your chat OAuth
             prefix='!',
             initial_channels=[TWITCH_CHANNEL_NAME]
         )
